@@ -10,31 +10,10 @@ import (
 	factorioapiv2 "github.com/nekomeowww/factorio-rcon-api/v2/apis/factorioapi/v2"
 	"github.com/nekomeowww/fo"
 	"github.com/nekomeowww/tgo"
-	"github.com/nekomeowww/xo"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
-
-func FullNameFromFirstAndLastName(firstName, lastName string) string {
-	if lastName == "" {
-		return firstName
-	}
-	if firstName == "" {
-		return lastName
-	}
-	if xo.ContainsCJKChar(firstName) && !xo.ContainsCJKChar(lastName) {
-		return firstName + " " + lastName
-	}
-	if !xo.ContainsCJKChar(firstName) && xo.ContainsCJKChar(lastName) {
-		return lastName + " " + firstName
-	}
-	if xo.ContainsCJKChar(firstName) && xo.ContainsCJKChar(lastName) {
-		return lastName + " " + firstName
-	}
-
-	return firstName + " " + lastName
-}
 
 func NewBot() func() (*tgo.Bot, error) {
 	return func() (*tgo.Bot, error) {
@@ -57,7 +36,7 @@ func NewBot() func() (*tgo.Bot, error) {
 			}
 
 			_ = fo.May(client.CommandMessage(context.TODO(), &factorioapiv2.CommandMessageRequest{
-				Message: fmt.Sprintf("%s: %s", FullNameFromFirstAndLastName(ctx.Update.Message.From.FirstName, ctx.Update.Message.From.LastName), ctx.Update.Message.Text),
+				Message: fmt.Sprintf("%s: %s", tgo.FullNameFromFirstAndLastName(ctx.Update.Message.From.FirstName, ctx.Update.Message.From.LastName), ctx.Update.Message.Text),
 			}))
 
 			next()
